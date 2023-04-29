@@ -1,6 +1,12 @@
 
 # LaTeX Documentation Respository
 
+Write LaTeX directly, or in markdown or anything Pandoc can convert to .tex. 
+
+`deploy.sh` collects them and uses LaTeX to generate a PDF which includes the git hash the document was compiled from on the title page and every page's header.
+
+Markdown files must be included in `report.tex` via `input{filename}` where filename has no extensions since the `.md` will be converted to `.tex`
+
 Latest **[Compiled PDF](https://github.com/uasal/latex-ci-report-template/raw/compiled/instrument_guide.pdf)**
 
 Compile log and status of the main branch:
