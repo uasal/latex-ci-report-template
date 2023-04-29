@@ -22,8 +22,8 @@ jobs:
       - name: clone submodule
         uses: actions/checkout@v2
         with:
-          repository: uasal/pearl_requirements
-          path: pearl_requirements
+          repository: uasal/doorstop_requirements_template
+          path: requirements_template
           ssh-key: ${{ secrets.SUBMODULE_CONTENT_PULL_KEY }}
           persist-credentials: false
       - name: Python-setup action
