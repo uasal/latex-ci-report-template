@@ -1,0 +1,64 @@
+name: Workflow GitHub CI
+
+# Events and coresponding branches that initiate this workflow
+
+on: 
+  push:
+    branches: 
+      - gh-actions-testing
+      - main
+  pull_request:
+      types: [opened, reopened,edited,synchronize]
+  workflow_dispatch:
+
+# job to check out repo update and install dependencies and run scripts
+jobs:
+  build: 
+    runs-on: ubuntu-latest
+      # https://github.com/actions/setup-python#caching-packages-dependencies
+    steps:
+      - name: Checkout action
+        uses: actions/checkout@v3
+      - name: clone submodule
+        uses: actions/checkout@v2
+        with:
+          repository: uasal/pearl_requirements
+          path: pearl_requirements
+          ssh-key: ${{ secrets.SUBMODULE_CONTENT_PULL_KEY }}
+          persist-credentials: false
+      - name: Python-setup action
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.7'
+          cache: 'pip' # caching pip dependencies
+      - name: Import Libraries
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y texlive-base texlive-latex-base texlive-latex-extra texlive-xetex texlive-fonts-recommended texlive-fonts-extra texlive-lang-greek
+          sudo apt-get install pandoc
+          sudo apt-get install graphviz
+      - name: Install
+        run: |
+          pip install pipenv --upgrade-strategy=only-if-needed
+          pipenv install --dev
+      - name: Run deploy.sh
+        run: bash deploy.sh
+      - uses: actions/upload-artifact@v3
+        with:
+           name: guide
+           path: instrument_guide.pdf
+
+    # push the psf file to to the worktree branch compiled
+      - name: push PDF to compiled branch
+        run: |
+          git fetch origin compiled  --recurse-submodules=no  #only retrieve the branch of interest
+          git config --global user.name 'GitHub Action'
+          git config --global user.email 'action@github.com'
+          git branch --track compiled origin/compiled         #?necessary? make sure that the local compiled branch is synced to origin
+          mkdir dist
+          git worktree add dist compiled                      # Mount dist and bind dist to the compile branch
+          mv instrument_guide.pdf dist/instrument_guide.pdf   # move previously generated file into compiled branch
+          cd dist                                             #
+          git add .                                           # add anything in the output directory
+          git commit -m "compiled"                            # Update the version history
+          git push                                            # Push changes to compiled branch
