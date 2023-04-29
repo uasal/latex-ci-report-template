@@ -17,7 +17,6 @@ do
     pandoc "$f" -o "${f%.rst}.tex"
 done
 
-pandoc "pearl_requirements/dist/L2.markdown" -o "pearl_requirements/dist/L2.tex"
 # setup gitinfo
 sed -i -e 's/\r$//' gitinfo2-hook.sh
 ./gitinfo2-hook.sh
