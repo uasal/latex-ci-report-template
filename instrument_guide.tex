@@ -1,0 +1,116 @@
+%
+\documentclass[12pt]{book}
+\input{pandoc_frontmatter}
+\usepackage[smartEllipses]{markdown}
+\usepackage{gitinfo2}
+\usepackage{import}
+\usepackage{eso-pic}
+\usepackage{pdfpages} %https://tex.stackexchange.com/questions/21248/how-to-add-a-page-number-to-the-included-pdf-pages
+\usepackage{glossaries}
+\usepackage{lineno}
+\usepackage{tikz}
+
+\AddToHook{shipout/foreground}{
+  \begin{tikzpicture}[remember picture,overlay]
+    \node[red,rotate=30,scale=10,opacity=0.1] at (current page.center) {Draft}; 
+  \end{tikzpicture}
+}
+\makeglossaries
+% \usepackage{array}
+% \usepackage{longtable}
+
+%\renewcommand{\thesection}{\Alph{section}.}
+
+%ADD MISSION NAME HERE:
+
+%\setcounter{secnumdepth}{0}  %https://tex.stackexchange.com/questions/11668/adding-unnumbered-sections-to-toc
+\setcounter{secnumdepth}{3} % 3 => section, subsection, subsubsection
+%% Redefines (sub)paragraphs to behave more like sections 
+%
+%
+% create "fakesections" that don't have text but show up in TOC:
+%https://tex.stackexchange.com/questions/443701/how-to-remove-the-section-title-and-the-section-counter?noredirect=1&lq=1
+\newcommand{\fakesection}[1]{%
+  \par\refstepcounter{section}% Increase section counter
+  \sectionmark{#1}% Add section mark (header)
+  \addcontentsline{toc}{section}{ #1}% Add section to ToC
+  % Add more content here, if needed.
+}
+\newcommand{\fakesubsection}[1]{%
+  %\par\refstepcounter{section}% Increase section counter
+  \sectionmark{#1}% Add section mark (header)
+  \addcontentsline{toc}{subsection}{ #1}% Add section to ToC
+  % Add more content here, if needed.
+}
+%
+%
+%%\renewcommand*{\thefootnote}{\fnsymbol{footnote}}
+
+%\date{}
+
+\edef\masterBranch{\detokenize{master}}
+\edef\gitBranch{\gitBranch}
+
+\usepackage{fancyhdr}
+
+
+\cfoot{\thepage\n }
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[LE,RO]{Rev: \gitAbbrevHash- \gitDirty\, \gitCommitterDate}
+\fancyhead[RE,LO]{WCC, Page \thepage}
+\fancyfoot[CE,CO]{\rightmark}
+\setlength{\headheight}{14.49998pt}
+\addtolength{\topmargin}{-2.49998pt}
+%\fancyfoot[LE,RO]{}
+
+\begin{document}
+\begin{titlepage}
+\begin{center}
+%https://stackoverflow.com/questions/58963627/how-to-set-different-backgrounds-for-each-page-in-latex
+%\AddToShipoutPictureBG*{\includegraphics[width=\paperwidth,height=\paperheight]{cover_small.pdf}}
+
+\topskip0pt
+\vspace*{\fill}
+{\large \bfseries Wavefront and Context Camera: Design and Users Guide\footnote{{ Revision: \gitAbbrevHash - \gitDirty\ Date: \gitCommitterDate}}}
+\vspace*{20cm}
+\end{center}
+
+
+\end{titlepage}
+\newpage
+\begin{center}
+
+\vspace{7cm }
+\
+\includegraphics[width=0.5\textwidth]{images/steward_logo.png}
+\vspace{2cm }
+
+Ewan S. Douglas, douglase@arizona.edu\\
+
+\textbf{as a living document typos and inconsistencies may be present. Confirm you are using the latest draft and then feel free to request clarification or suggest changes.}
+
+Nothing in this document is confidential or proprietary.
+
+
+\end{center}
+
+%this toggle commands turns on and off PDFs that you want to include such as budget, letters of support, CVs, etc...
+
+%Revision: \gitAbbrevHash -\gitDirty \ Date: \gitCommitterDate
+%make sure the trailing slashes are included in path! https://tex.stackexchange.com/a/44481/150841
+\tableofcontents
+
+\linenumbers
+
+\chapter{Overview and motivation}
+\printglossary[type=main,nonumberlist]
+
+
+\sloppy % keep things from spilling into margins
+\bibliographystyle{abbrvnat}
+\bibliography{cdeepDontEdit,otherOKtoEdit}
+
+Fin.
+\end{document}
